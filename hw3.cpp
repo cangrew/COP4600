@@ -2,6 +2,9 @@
 #include <bits/stdc++.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <sys/types.h>
+#include <signal.h>
+#include <ctype.h>
 
 
 using namespace std;
@@ -30,7 +33,7 @@ class Mysh {
 
 		Parser p;
 		vector<string> his;
-		vector<string> pids;
+		vector<pid_t> pids;
 
 		//Implements history operation
 		void history(){
@@ -49,7 +52,7 @@ class Mysh {
 
 		void byebye(){
 			ofstream fout;
-			fout.open("history.txt");
+			fout.open("mysh.history");
 			for(int i = 0; i < his.size(); i++){
 				fout << his[i] << endl;
 			}
@@ -58,11 +61,11 @@ class Mysh {
 		}
 		
 		void replay(string arg){
-			try{
+			if(all_of(arg.begin(), arg.end(), ::isdigit)){	
 				int id = stoi(arg);
 				runOP(*(p.tokenize(his[his.size() -2 - id])));
 			}
-			catch(...){
+			else{
 				cerr << "Argument Invalid!\n";
 			}
 		}
@@ -115,6 +118,7 @@ class Mysh {
 				}
 			else{
 				cout << pid << endl;
+				pids.push_back(pid);
 			}
 		}
 
@@ -139,29 +143,49 @@ class Mysh {
 				}
 			else{
 				cout << pid << endl;
+				pids.push_back(pid);
 			}
 		}
 
 		void terminate(string arg){
-			try{
-				kill(atoi(arg.c_str()), 0 );
+			if(all_of(arg.begin(), arg.end(), ::isdigit)){	
+				pid_t pid = stoi(arg);
+				kill(pid, SIGKILL );
+				pids.erase(remove(pids.begin(),pids.end(),pid));
 			}
-			catch(...){
+			else{
 				cerr << "Invalid PID!\n";
 			}
 		}
-
-		void repeat(vector<string> tokens){
 		
+		void terminate(int arg){
+			kill(arg, SIGKILL );
+			pids.erase(remove(pids.begin(),pids.end(),arg));
 		}
 
+		void repeat(vector<string> tokens){
+					
+		}
+	
 		void terminateall(){
-			
+			if(!pids.empty()){
+				cout << "Terminating " << pids.size() << " processes: ";
+				for(int i = 0; i < pids.size(); i++){
+					cout << pids[i] << " ";
+					terminate(pids[i]);
+				}
+				pids.clear();
+			}
+			else{
+				cout << "No processes to terminate.\n";
+			}
 		}
 
 		void loadHistory(){
 			ifstream fin;
-			fin.open("history.txt");
+			fin.open("mysh.history");
+			if(!fin.good())
+				return;
 			string temp;
 			while(!fin.eof()){
 				getline(fin,temp);

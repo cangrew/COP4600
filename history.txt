@@ -1,0 +1,30 @@
+background firefox
+background dolphin
+byebye
+background nautilus
+history
+terminate 1025
+ls
+terminate 1025
+start kill 1025
+start clear
+ls
+byebye
+background nautilus
+terminate 1083
+terminate 1082
+byebye
+history
+replay 4
+terminate 1126
+byebye
+background nautilus
+terminate 1172
+byebye
+terminate 1172
+start clear
+byebye
+history
+byebye
+bye
+byebye
