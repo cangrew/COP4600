@@ -7,23 +7,23 @@ public class SantaScenario {
 	public Santa santa;
 	public List<Elf> elves;
 	public List<Reindeer> reindeers;
-	public int atSantasDoor;
 	public List<Elf> atSantas;
 	public int inTrouble;
 	public Semaphore semaphore;
 	public Semaphore goToSanta;
 	public Semaphore lockS;
+	public Semaphore lockT;
 	public boolean isDecember;
 	
 	public static void main(String args[]) {
 		SantaScenario scenario = new SantaScenario();
 		scenario.isDecember = false;
-		scenario.atSantasDoor = 0;
 		scenario.atSantas = new ArrayList<>();
 		scenario.inTrouble = 0;
 		scenario.semaphore = new Semaphore(3,true);
 		scenario.goToSanta = new Semaphore(0,true);
 		scenario.lockS = new Semaphore(1,true);
+		scenario.lockT = new Semaphore(1,true);
 
 		// create the participants
 		// Santa

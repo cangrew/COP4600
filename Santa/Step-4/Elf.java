@@ -57,12 +57,12 @@ public class Elf implements Runnable {
 				// trouble.
 				if (rand.nextDouble() < 0.01) {
 					try {
-						scenario.lockS.acquire();
+						scenario.lockT.acquire();
 
 						state = ElfState.TROUBLE;
 						scenario.inTrouble++;
 
-						scenario.lockS.release();
+						scenario.lockT.release();
 					} catch (InterruptedException e) {
 					}
 				}
@@ -78,12 +78,14 @@ public class Elf implements Runnable {
 					}
 					scenario.goToSanta.acquire();
 					scenario.lockS.acquire();
+					scenario.lockT.acquire();
 
 					scenario.atSantas.add(this);
 					this.state = ElfState.AT_SANTAS_DOOR;
 					//System.out.println("test");
 					scenario.inTrouble--;
-
+					
+					scenario.lockT.release();
 					scenario.lockS.release();
 				} catch (InterruptedException e) {
 				}
@@ -95,6 +97,7 @@ public class Elf implements Runnable {
 				break;
 			}
 		}
+			System.exit(1);
 	}
 
 	/**
