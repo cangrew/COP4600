@@ -37,7 +37,6 @@ public class Santa implements Runnable {
 				break;
 			case WOKEN_UP_BY_ELVES: 
 				// FIXME: help the elves who are at the door and go back to sleep
-				//System.out.println("POGYY");
 				try {
 					scenario.lockS.acquire();
 

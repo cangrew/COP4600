@@ -76,13 +76,12 @@ public class Elf implements Runnable {
 						for(int i = 0 ; i < 3; i++)
 							scenario.goToSanta.release();
 					}
-					//System.out.println("Passed sema" + scenario.inTrouble);
 					scenario.goToSanta.acquire();
-					//System.out.println("Passed goToSanta");
 					scenario.lockS.acquire();
 
 					scenario.atSantas.add(this);
 					this.state = ElfState.AT_SANTAS_DOOR;
+					//System.out.println("test");
 					scenario.inTrouble--;
 
 					scenario.lockS.release();
@@ -92,7 +91,6 @@ public class Elf implements Runnable {
 				break;
 			case AT_SANTAS_DOOR:
 				// FIXME: if feasible, wake up Santa
-				//System.out.println("waking up");
 				scenario.santa.wakeUp();
 				break;
 			}
