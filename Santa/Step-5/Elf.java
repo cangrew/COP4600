@@ -56,32 +56,38 @@ public class Elf implements Runnable {
 				// at each day, there is a 1% chance that an elf runs into
 				// trouble.
 				if (rand.nextDouble() < 0.01) {
-					state = ElfState.TROUBLE;
-					while(scenario.lock){
+					try {
+						scenario.lockS.acquire();
+
+						state = ElfState.TROUBLE;
+						scenario.inTrouble++;
+
+						scenario.lockS.release();
+					} catch (InterruptedException e) {
 					}
-					scenario.lock = true;
-					scenario.inTrouble++;
-					scenario.lock = false;
 				}
 				break;
 			}
 			case TROUBLE:
 				// FIXME: if possible, move to Santa's door
-				while(scenario.lock){
+				try {
+					scenario.semaphore.acquire();
+					if(scenario.inTrouble >= 3){
+						for(int i = 0 ; i < 3; i++)
+							scenario.goToSanta.release();
+					}
+					scenario.goToSanta.acquire();
+					scenario.lockS.acquire();
+
+					scenario.atSantas.add(this);
+					this.state = ElfState.AT_SANTAS_DOOR;
+					//System.out.println("test");
+					scenario.inTrouble--;
+
+					scenario.lockS.release();
+				} catch (InterruptedException e) {
 				}
-				scenario.lock = true;
-				if(scenario.atSantasDoor > 0);
-				else if( scenario.inTrouble >= 3){
-					for(Elf elf : scenario.elves){
-						if(elf.state == ElfState.TROUBLE){
-							elf.state = ElfState.AT_SANTAS_DOOR;
-							scenario.inTrouble--;
-							if( ++scenario.atSantasDoor == 3 )
-								break;
-						}
-					}	
-				}
-				scenario.lock = false;
+
 				break;
 			case AT_SANTAS_DOOR:
 				// FIXME: if feasible, wake up Santa
